@@ -14,7 +14,9 @@ private fun checkRucksacks(inventories: List<String>): Long {
 private fun findBadges(inventories: List<String>): Long {
     return inventories
         .chunked(3)
-        .map { it.intersecting().first() }
+        .map { it.toSet() }
+        .reduce { acc, chars -> acc.intersect(chars) }
+        .first()
         .sumOf { it.getPriority() }
 }
 
@@ -22,17 +24,9 @@ private fun String.splitInTwo(): Pair<Set<Char>, Set<Char>> {
     return take(length / 2).toSet() to drop(length / 2).toSet()
 }
 
-private fun List<String>.intersecting(): Set<Char> {
-    var current: Set<Char> = this[0].toSet()
-    for (i in 1 until size) {
-        current = current.intersect(this[i].toSet())
+private fun Char.getPriority() =
+    if (this in 'a'..'z') {
+        code - 96L
+    } else {
+        code - 38L
     }
-
-    return current
-}
-
-private fun Char.getPriority() = if ("[a-z]".toRegex().matches("$this")) {
-    code - 96L
-} else {
-    code - 38L
-}
