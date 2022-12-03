@@ -6,36 +6,21 @@ fun main() {
     println(topCarriers)
 }
 
-private fun caloriesCounter(lines: List<String>): Long {
-    var sum = 0L
-    var max = 0L
-    for (line in lines) {
-        if (line.isBlank()) {
-            if (sum > max) max = sum
-            sum = 0
-            continue
+private fun caloriesPerElf(calories: List<String>): List<Long> {
+    return calories
+        .joinToString("|")
+        .split("||")
+        .map {
+            it
+                .split("|")
+                .sumOf { k -> k.toLong() }
         }
-
-        sum += line.toLong()
-    }
-
-    return max
 }
 
-private fun topThreeCalorieCarriers(lines: List<String>): Long {
-    val elves = mutableListOf<Long>()
-    var sum = 0L
-    for (line in lines) {
-        if (line.isBlank()) {
-            elves.add(sum)
-            sum = 0
-            continue
-        }
+private fun caloriesCounter(calories: List<String>): Long {
+    return caloriesPerElf(calories).maxOf { it }
+}
 
-        sum += line.toLong()
-    }
-
-    elves.sort()
-
-    return elves.takeLast(3).sum()
+private fun topThreeCalorieCarriers(calories: List<String>): Long {
+    return caloriesPerElf(calories).sorted().takeLast(3).sum()
 }
